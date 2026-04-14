@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nego Design · Portfólio</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* =============================================
+       VARIÁVEIS CSS
+    ============================================= */
+    :root {
+      --bg:        #0d0d0d;
+      --surface:   #141414;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #f0ede8;
+      --muted:     #7a7672;
+      --accent:    #2d6a4f;
+      --accent-dim:#1b4332;
+      --white:     #ffffff;
+      --radius:    4px;
+      --ease:      cubic-bezier(.25,.46,.45,.94);
+      --font-display: 'Poppins', sans-serif;
+      --font-body:    'Poppins', sans-serif;
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; object-fit: cover; }
+    a   { color: inherit; text-decoration: none; }
+    ul  { list-style: none; }
+
+    .line {
+      display: block;
+      width: 40px; height: 1px;
+      background: var(--accent);
+      margin-bottom: 24px;
+    }
+    .label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* =============================================
+       ANIMAÇÕES
+    ============================================= */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes scrollAnim {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* =============================================
+       CURSOR PERSONALIZADO
+    ============================================= */
+    .cursor {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(45,106,79,.5);
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* =============================================
+       BARRA DE PROGRESSO
+    ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent);
+      z-index: 200;
+      width: 0%;
+      transition: width .1s linear;
+    }
+
+    /* =============================================
+       HEADER / NAV
+    ============================================= */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 5vw;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: background .4s, border-color .4s;
+    }
+    header.scrolled {
+      background: rgba(13,13,13,.92);
+      backdrop-filter: blur(16px);
+      border-color: var(--border);
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: .06em;
+    }
+    .logo span { color: var(--accent); }
+
+    nav ul { display: flex; gap: 40px; align-items: center; }
+    nav a {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      position: relative;
+      transition: color .3s;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width .3s var(--ease);
+    }
+    nav a:hover { color: var(--text); }
+    nav a:hover::after { width: 100%; }
+
+    .nav-cta {
+      padding: 9px 22px;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+      border-radius: var(--radius);
+      transition: background .3s, color .3s !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg) !important; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 200;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px; height: 1.5px;
+      background: var(--text);
+      transition: transform .35s var(--ease), opacity .3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 150;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--muted);
+      transition: color .3s;
+    }
+    .mobile-menu a:hover { color: var(--text); }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #inicio {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 120px 5vw 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    #inicio::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(45,106,79,.1) 0%, transparent 70%);
+      top: 50%; right: 5%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+      animation: fadeIn 1s var(--ease) both;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-size: clamp(52px, 6vw, 88px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -.01em;
+      margin-bottom: 28px;
+      animation: fadeUp .9s .2s var(--ease) both;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+
+    .hero-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 48px;
+      animation: fadeUp .9s .35s var(--ease) both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp .9s .5s var(--ease) both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: background .3s, transform .3s;
+    }
+    .btn-primary:hover { background: #3a8563; transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: border-color .3s, color .3s, transform .3s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); transform: translateY(-2px); }
+
+    /* Imagem hero */
+    .hero-visual {
+      position: relative;
+      height: 580px;
+      animation: fadeIn 1.2s .4s var(--ease) both;
+    }
+    .hero-img-wrap {
+      position: absolute;
+      inset: 0;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .hero-img-wrap img {
+      height: 100%;
+      object-position: center top;
+      filter: grayscale(20%);
+      transition: filter .5s;
+    }
+    .hero-img-wrap:hover img { filter: grayscale(0%); }
+    .hero-img-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(45,106,79,.15) 0%, transparent 60%);
+    }
+    .hero-number {
+      position: absolute;
+      bottom: -20px; left: -24px;
+      font-size: 120px;
+      font-weight: 300;
+      color: rgba(255,255,255,.04);
+      line-height: 1;
+      user-select: none;
+      z-index: -1;
+    }
+
+    /* Scroll indicator */
+    .scroll-ind {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeIn 1.5s 1s var(--ease) both;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollAnim 2s 1.5s infinite;
+    }
+
+    /* =============================================
+       SOBRE
+    ============================================= */
+    #sobre {
+      padding: 120px 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .sobre-text h2 {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+    .sobre-text h2 em { font-style: italic; color: var(--accent); }
+    .sobre-text p {
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 20px;
+      max-width: 500px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 40px;
+    }
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      transition: border-color .3s, transform .3s;
+    }
+    .skill-item:hover { border-color: var(--accent-dim); transform: translateX(4px); }
+    .skill-item i { color: var(--accent); font-size: 14px; width: 16px; }
+
+    .sobre-visual { position: relative; }
+    .sobre-photo {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+    .sobre-photo img {
+      height: 100%;
+      filter: grayscale(30%);
+      transition: filter .6s, transform .6s;
+    }
+    .sobre-photo:hover img { filter: grayscale(0%); transform: scale(1.03); }
+
+    /* =============================================
+       SERVIÇOS
+    ============================================= */
+    #servicos {
+      padding: 120px 5vw;
+      border-top: 1px solid var(--border);
+    }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+    }
+    .section-head h2 {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+    .section-head h2 em { font-style: italic; color: var(--accent); }
+    .section-num {
+      font-size: 80px;
+      font-weight: 300;
+      color: rgba(255,255,255,.06);
+      line-height: 1;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background .4s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s var(--ease);
+    }
+    .service-card:hover { background: var(--surface); }
+    .service-card:hover::before { transform: scaleX(1); }
+
+    .service-icon {
+      font-size: 28px;
+      color: var(--accent);
+      margin-bottom: 24px;
+      transition: transform .4s;
+    }
+    .service-card:hover .service-icon { transform: scale(1.1) rotate(-5deg); }
+    .service-card h3 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .service-card p {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.8;
+    }
+    .service-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      transition: color .3s, gap .3s;
+    }
+    .service-card:hover .service-arrow { color: var(--accent); gap: 14px; }
+
+    /* =============================================
+       PORTFÓLIO
+    ============================================= */
+    #portfolio {
+      padding: 120px 5vw;
+      border-top: 1px solid var(--border);
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin-top: 64px;
+    }
+    .port-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .port-item:nth-child(1) { grid-column: 1 / 8;  grid-row: 1; aspect-ratio: 16/9; }
+    .port-item:nth-child(2) { grid-column: 8 / 13; grid-row: 1; aspect-ratio: 4/5; }
+    .port-item:nth-child(3) { grid-column: 1 / 5;  grid-row: 2; aspect-ratio: 4/5; }
+    .port-item:nth-child(4) { grid-column: 5 / 9;  grid-row: 2; aspect-ratio: 16/9; }
+    .port-item:nth-child(5) { grid-column: 9 / 13; grid-row: 2; aspect-ratio: 1; }
+    .port-item:nth-child(6) { grid-column: 1 / 13; grid-row: 3; aspect-ratio: 21/6; }
+
+    .port-item img {
+      height: 100%;
+      object-fit: cover;
+      transition: transform .7s var(--ease), filter .5s;
+      filter: grayscale(40%);
+    }
+    .port-item:hover img { transform: scale(1.06); filter: grayscale(0%); }
+
+    .port-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity .4s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+    }
+    .port-item:hover .port-overlay { opacity: 1; }
+    .port-tag {
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .port-title { font-size: 22px; font-weight: 400; }
+    .port-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      padding: 40px 5vw;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer .logo { font-size: 18px; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color .3s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* =============================================
+       RESPONSIVIDADE
+    ============================================= */
+    @media (max-width: 1024px) {
+      #inicio { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      #sobre { grid-template-columns: 1fr; }
+      .sobre-visual { max-width: 400px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav ul { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+      #inicio { padding: 100px 5vw 60px; }
+      .section-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .section-num { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .port-item:nth-child(1) { grid-column: 1 / 3; grid-row: auto; }
+      .port-item:nth-child(2) { grid-column: 1 / 2; grid-row: auto; }
+      .port-item:nth-child(3) { grid-column: 2 / 3; grid-row: auto; }
+      .port-item:nth-child(4) { grid-column: 1 / 3; grid-row: auto; }
+      .port-item:nth-child(5) { grid-column: 1 / 2; grid-row: auto; }
+      .port-item:nth-child(6) { grid-column: 2 / 3; grid-row: auto; }
+      footer { flex-direction: column; align-items: center; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .port-item { grid-column: 1 !important; }
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de progresso de scroll -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Cursor personalizado (só desktop) -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- =============================================
+       HEADER
+  ============================================= -->
+  <header id="header">
+    <a href="#inicio" class="logo">Nego <span>·</span> Design</a>
+    <nav>
+      <ul>
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#portfolio">Portfólio</a></li>
+        <li><a href="https://wa.me/5585999990000" target="_blank" class="nav-cta">Contato</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- Menu mobile -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#inicio" class="mob-link">Início</a>
+    <a href="#sobre" class="mob-link">Sobre</a>
+    <a href="#servicos" class="mob-link">Serviços</a>
+    <a href="#portfolio" class="mob-link">Portfólio</a>
+    <a href="https://wa.me/5585999990000" target="_blank" class="mob-link">Contato</a>
+  </div>
+
+  <!-- =============================================
+       HERO
+  ============================================= -->
+  <section id="inicio">
+    <div class="hero-glow"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag">Designer &amp; Social Media</div>
+
+      <h1 class="hero-title">
+        Transformando<br />ideias em<br /><em>design</em>
+      </h1>
+
+      <p class="hero-sub">
+        Crio identidades visuais e conteúdos para redes sociais que conectam marcas às pessoas certas — com propósito, estética e estratégia.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#portfolio" class="btn-primary">
+          Ver projetos <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="https://wa.me/5585994224533" target="_blank" class="btn-ghost">
+          <i class="fa-brands fa-whatsapp"></i> Falar comigo
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-img-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&q=80"
+          alt="Design criativo"
+        />
+      </div>
+      <div class="hero-number">01</div>
+    </div>
+
+    <div class="scroll-ind">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SOBRE
+  ============================================= -->
+  <section id="sobre">
+    <div class="sobre-text reveal">
+      <span class="label">Sobre mim</span>
+      <span class="line"></span>
+
+      <h2>Criatividade com<br /><em>intenção</em> e propósito</h2>
+
+      <p>
+        Sou designer especializado em identidade visual e gestão de redes sociais. Acredito que cada marca tem uma história única para contar — e meu trabalho é transformar essa história em imagens que ficam na memória.
+      </p>
+      <p>
+        Com anos de experiência, já ajudei dezenas de marcas a construir presença digital autêntica e consistente.
+      </p>
+
+      <div class="skills-grid">
+        <div class="skill-item"><i class="fa-solid fa-palette"></i> Identidade Visual</div>
+        <div class="skill-item"><i class="fa-brands fa-instagram"></i> Social Media</div>
+        <div class="skill-item"><i class="fa-solid fa-layer-group"></i> UI / Branding</div>
+        <div class="skill-item"><i class="fa-solid fa-bezier-curve"></i> Vetorização de Logo</div>
+        <div class="skill-item"><i class="fa-solid fa-swatchbook"></i> Designs em Geral</div>
+      </div>
+    </div>
+
+    <div class="sobre-visual reveal">
+      <div class="sobre-photo">
+        <img
+          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700&q=80"
+          alt="Nego Design"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SERVIÇOS
+  ============================================= -->
+  <section id="servicos">
+    <div class="section-head reveal">
+      <div>
+        <span class="label">O que ofereço</span>
+        <h2>Serviços feitos<br />para sua <em>marca</em></h2>
+      </div>
+      <div class="section-num">02</div>
+    </div>
+
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-brands fa-instagram"></i></div>
+        <h3>Design para Redes Sociais</h3>
+        <p>Criação de posts, stories e reels com identidade visual consistente que aumentam o engajamento da sua audiência.</p>
+        <div class="service-arrow">Saiba mais <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-fingerprint"></i></div>
+        <h3>Identidade Visual</h3>
+        <p>Desenvolvimento de logo, paleta de cores, tipografia e manual de marca que traduzem a essência do seu negócio.</p>
+        <div class="service-arrow">Saiba mais <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-print"></i></div>
+        <h3>Material Impresso</h3>
+        <p>Cartões, flyers, cardápios e catálogos com acabamento refinado e coerência com sua identidade de marca.</p>
+        <div class="service-arrow">Saiba mais <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fa-solid fa-bullseye"></i></div>
+        <h3>Consultoria de Marca</h3>
+        <p>Diagnóstico completo da sua presença visual e digital com plano de ação para fortalecer sua marca no mercado.</p>
+        <div class="service-arrow">Saiba mais <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============================================
+       PORTFÓLIO
+  ============================================= -->
+  <section id="portfolio">
+    <div class="section-head reveal">
+      <div>
+        <span class="label">Projetos recentes</span>
+        <h2>Trabalhos que<br /><em>falam por si</em></h2>
+      </div>
+      <div class="section-num">03</div>
+    </div>
+
+    <div class="portfolio-grid">
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=900&q=80" alt="Projeto 1" />
+        <div class="port-overlay">
+          <div class="port-tag">Identidade Visual</div>
+          <div class="port-title">Café Botânico</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=700&q=80" alt="Projeto 2" />
+        <div class="port-overlay">
+          <div class="port-tag">Social Media</div>
+          <div class="port-title">Lumina Beauty</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1542744094-24638eff58bb?w=700&q=80" alt="Projeto 3" />
+        <div class="port-overlay">
+          <div class="port-tag">Branding</div>
+          <div class="port-title">Estúdio Mira</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=900&q=80" alt="Projeto 4" />
+        <div class="port-overlay">
+          <div class="port-tag">UI Design</div>
+          <div class="port-title">App Plantar</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?w=700&q=80" alt="Projeto 5" />
+        <div class="port-overlay">
+          <div class="port-tag">Design Gráfico</div>
+          <div class="port-title">Vídeo Pitch</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="port-item reveal">
+        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1400&q=80" alt="Projeto 6" />
+        <div class="port-overlay">
+          <div class="port-tag">Campanha Digital</div>
+          <div class="port-title">Verão Nórdico — Coleção 2024</div>
+          <div class="port-link">Ver projeto <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer>
+    <a href="#inicio" class="logo">Nego <span>·</span> Design</a>
+    <p class="footer-copy">© 2025 Nego Design. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#inicio">Início</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#portfolio">Portfólio</a>
+      <a href="https://wa.me/5585994224533" target="_blank">WhatsApp</a>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       SCRIPTS
+  ============================================= -->
+  <script>
+    /* ---------- Cursor personalizado ---------- */
+    const cursor     = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let cx = 0, cy = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX; cy = e.clientY;
+      cursor.style.left = cx - 4 + 'px';
+      cursor.style.top  = cy - 4 + 'px';
+    });
+
+    (function animRing() {
+      rx += (cx - rx) * .14;
+      ry += (cy - ry) * .14;
+      cursorRing.style.left = rx - 18 + 'px';
+      cursorRing.style.top  = ry - 18 + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    if ('ontouchstart' in window) {
+      cursor.style.display = 'none';
+      cursorRing.style.display = 'none';
+    }
+
+    /* ---------- Header scroll ---------- */
+    const header = document.getElementById('header');
+    const bar    = document.getElementById('progressBar');
+
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      bar.style.width = pct + '%';
+    });
+
+    /* ---------- Hamburger / menu mobile ---------- */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    document.querySelectorAll('.mob-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    /* ---------- Reveal on scroll ---------- */
+    const reveals = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const siblings = [...e.target.parentElement.querySelectorAll('.reveal')];
+          const idx = siblings.indexOf(e.target);
+          e.target.style.transitionDelay = (idx * 0.1) + 's';
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
